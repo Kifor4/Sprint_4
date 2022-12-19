@@ -3,8 +3,6 @@ package ru.kiforchuk.tests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import ru.kiforchuk.pages.MainPage;
 
 import static org.junit.Assert.assertTrue;
@@ -23,26 +21,12 @@ public class ImportantQuestionsTest extends AbstractTest {
 
     /**
      * Возвращает параметры, в зависимости от количества найденных кнопок.
+     *
      * @return одномерный массив объектов-параметров
      */
     @Parameterized.Parameters
     public static Object[] getTestData() {
-        //Драйвер для создания параметров
-        WebDriver paramDriver = new ChromeDriver();
-        //Объект главной страницы для создания параметров
-        MainPage paramMainPageObj = new MainPage(paramDriver);
-        //Открываем ссылку
-        paramDriver.get(UrlConstants.SCOOTER_MAIN_PAGE_URL);
-        //Считаем количество кнопок-вопросов
-        int buttonCount = paramMainPageObj.getImportantQuestionsAccordionButtonsCount();
-        //Закрываем драйвер
-        paramDriver.quit();
-        //Создаем, заполняем и возвращаем массив параметров
-        Object[] params = new Object[buttonCount];
-        for (int i = 0; i < params.length; i++) {
-            params[i] = i;
-        }
-        return params;
+        return new Object[]{0, 1, 2, 3, 4, 5, 6, 7};
     }
 
 
@@ -60,6 +44,10 @@ public class ImportantQuestionsTest extends AbstractTest {
 
         //Проверяет видел ли ответ
         boolean isAnswerDisplayed = mainPageObj.checkImportantQuestionsAccordionPanelIsDisplayed(index);
-        assertTrue("Ответ не виден" , isAnswerDisplayed);
+        assertTrue("Не виден ответ для вопроса №" + (index + 1) + "после нажатия", isAnswerDisplayed);
+
+        //Проверяем совпадает ли текст
+        assertTrue("Текст вопроса№ " + (index + 1) + " не совпадает с требуемым", mainPageObj.checkQuestionTextMatchingByIndex(index));
+        assertTrue("Текст открытого ответа не совпадает с требуемым или не соответствует выбранному вопросу №" + (index + 1), mainPageObj.checkDisplayedAnswerTextMatchingByQuestion(index));
     }
 }
